@@ -1,0 +1,5 @@
+refresh: 500  #ms
+init: []
+input: [char dir]
+feedback: [int x1, int y1, int x2, int y2, int x(10), int y(10)]
+display: [int x1, int y1, int x2, int y2, int x(10), int y(10)]
