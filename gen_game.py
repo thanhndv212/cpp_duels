@@ -5,7 +5,7 @@ import os
 
 class Info:
     def __init__(self, key):
-        self.type, key = key.split()
+        self.type, key = key.split()[:2]
         self.name = key.split('[')[0]
         self.dim = 0
         self.arr = ''
@@ -47,7 +47,7 @@ def msg_struct(field, content):
     if len(keys):
         ret += '  {};\n'.format('; '.join(keys))
     if field == 'display':
-        ret += build_sendToGUI(detail, refresh, ['int winner'])
+        ret += build_sendToGUI(detail, refresh, ['int winner = 0'])
     if field == 'init':
         ret += build_sendToGUI(detail, refresh, ['std::string p1', 'std::string p2'])
         
@@ -83,7 +83,7 @@ if __name__ == '__main__':
     guard = game.upper() + '_MSG_H'
     header = ['#ifndef {}'.format(guard)]
     header.append('#define {}'.format(guard))
-    for include in ('fstream', 'thread', 'sys.stat.h'):
+    for include in ('fstream', 'thread', 'sys/stat.h'):
         header.append('#include <{}>\n'.format(include)) 
     header.append('namespace {} {{'.format(game.lower()))
     header.append('''static constexpr const char * fifo_name = "/tmp/duels_{game}";
@@ -115,10 +115,11 @@ add_executable({game} main.cpp)
     main_template = '''#include <{game}/msg.h>
 #include <iostream>
 
-using namespace example;
+using namespace {game};
 
 int main(int argc, char** argv)
 {{
+  // can be commented if you run the python GUI on your own during testing
   runGUI();
 
   feedbackMsg fb1_msg, fb2_msg;
@@ -127,8 +128,15 @@ int main(int argc, char** argv)
   displayMsg display;
 
   // prepare init message
-
+  
+  
   init_msg.sendToGUI("player 1", "player 2");
+  
+  
+  // prepare first display message
+  
+  
+  
   display.sendToGUI();
 
   int winner(0);
@@ -146,7 +154,7 @@ int main(int argc, char** argv)
     if(winner)
       break;
   }}
-  std::cout << "Player " << winner << " has won!\n";
+  std::cout << "Player " << winner << " has won!\\n";
 }}'''
   
     gui_template = '''#!/usr/bin/python3
@@ -204,5 +212,6 @@ if __name__ == '__main__':
         dest = game_path + '/' + name
         if os.path.exists(dest):
             print('File {} exists, skipping'.format(dest))
+        #else:
         with open(dest, 'w') as f:
             f.write(cont.format(game=game))
