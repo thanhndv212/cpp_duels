@@ -20,12 +20,19 @@ int main(int argc, char** argv)
   for(int i = 0; i < 10; ++i)
     init_msg.d[i] = i*i;
 
+  auto last = std::chrono::steady_clock::now();
   init_msg.sendToGUI("player 1", "player 2");
   display.sendToGUI();
 
   int winner(0);
+
   while(winner == 0)
   {
+
+    auto now = std::chrono::steady_clock::now();
+    std::cout << "Loop duration: " <<
+                 std::chrono::duration_cast<std::chrono::milliseconds>(now-last).count() << " ms " << std::endl;
+    last = now;
 
 
     // update game state

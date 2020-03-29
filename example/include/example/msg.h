@@ -5,6 +5,24 @@
 #include <sys/stat.h>
 namespace example {
 static constexpr const char * fifo_name = "/tmp/duels_example";
+
+namespace {
+
+struct Timer
+{
+  std::chrono::steady_clock::time_point last;
+  const std::chrono::milliseconds ms;
+
+  inline Timer() : last(std::chrono::steady_clock::now()), ms(50) {}
+
+  inline void sleep()
+  {
+    std::this_thread::sleep_until(last + ms);
+    last = std::chrono::steady_clock::now();
+  }
+};
+Timer timer;
+}
 void runGUI()
 {
   remove(fifo_name);
@@ -30,7 +48,7 @@ struct initMsg
       fifo << d[i] << (i == 9?"]":", ");
     fifo << std::endl;
     fifo.close();
-    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    timer.sleep();
   }
 };
 
@@ -60,7 +78,7 @@ struct displayMsg
     fifo << "\nhit: " << hit;
     fifo << std::endl;
     fifo.close();
-    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    timer.sleep();
   }
 };
 

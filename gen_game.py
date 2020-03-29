@@ -26,7 +26,6 @@ class Info:
 def build_sendToGUI(detail, refresh, more = []):
     ret = '''  void sendToGUI({}) const
   {{
-    std::this_thread::sleep_for(std::chrono::milliseconds({}));
     std::ofstream fifo;
     fifo.open(fifo_name, std::ios::out);
     '''.format(', '.join(more), refresh)
@@ -34,7 +33,11 @@ def build_sendToGUI(detail, refresh, more = []):
         if i:
             ret += '\n    '
         ret += key.fifo(i)
-    return ret + '\n    fifo << std::endl;\n    fifo.close();\n  }\n'
+    return ret + '''
+    fifo << std::endl;
+    fifo.close();
+    timer.sleep();
+    }\n'''
             
 def msg_struct(field, content):
     
@@ -80,13 +83,27 @@ if __name__ == '__main__':
         content = yaml.safe_load(f)
     if 'refresh' not in content:
         content['refresh'] = 50;
-    guard = game.upper() + '_MSG_H'
-    header = ['#ifndef {}'.format(guard)]
-    header.append('#define {}'.format(guard))
-    for include in ('fstream', 'thread', 'sys/stat.h'):
-        header.append('#include <{}>\n'.format(include)) 
-    header.append('namespace {} {{'.format(game.lower()))
-    header.append('''static constexpr const char * fifo_name = "/tmp/duels_{game}";
+    header = ['''#ifndef {GAME}_MSG_H
+#define {GAME}_MSG_H
+#include <fstream>
+#include <thread>
+#include <sys/stat.h>
+namespace {game} {{
+namespace {{
+static constexpr const char * fifo_name = "/tmp/duels_{game}";
+struct Timer
+{{
+  std::chrono::steady_clock::time_point last;
+  const std::chrono::milliseconds ms;
+  inline Timer() : last(std::chrono::steady_clock::now()), ms({refresh}) {{}}
+  inline void sleep()
+  {{
+    std::this_thread::sleep_until(last + ms);
+    last = std::chrono::steady_clock::now();
+  }}
+}};
+Timer timer;
+}}
 void runGUI()
 {{
   remove(fifo_name);
@@ -94,14 +111,14 @@ void runGUI()
   struct stat buffer;
   while(stat(fifo_name, &buffer))
     std::this_thread::sleep_for(std::chrono::milliseconds(10));
-}}'''.format(game = game))
+}}'''.format(GAME = game.upper(), game = game, refresh = content['refresh'])]
+
     for field in ('init', 'input', 'feedback', 'display'):
         header.append(msg_struct(field, content))
     header.append('}\n#endif')
     with open(include_path + '/msg.h', 'w') as f:
         f.write('\n'.join(header))
         
-     
     cmake_template = '''cmake_minimum_required(VERSION 2.8.3)
 project({game} CXX)
 
