@@ -1,4 +1,8 @@
+# nothing particular to initialize
 init: []
+# vertical velocity of the bar
 input: [double v]
+# position of the bars + position of the ball
 feedback: [double y1, double y2, double x, double y]
+# C++ sends to Python position of the bars + position of the ball
 display: [double y1, double y2, double x, double y]
