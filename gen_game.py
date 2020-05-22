@@ -74,9 +74,9 @@ if __name__ == '__main__':
     include_path = game_path + 'include/' + game
         
     # create directories
-    for include_dir in (game_path + 'include', include_path):
-        if not os.path.exists(include_dir):
-            os.mkdir(include_dir)
+    for d in (game_path + 'include', include_path, game_path + 'src'):
+        if not os.path.exists(d):
+            os.mkdir(d)
             
     # generate message header
     with open(config) as f:
@@ -104,7 +104,7 @@ struct Timer
 }};
 Timer timer;
 }}
-void runGUI()
+inline void runGUI()
 {{
   remove(fifo_name);
   system("python3 ../{game}_gui.py&");
@@ -127,7 +127,7 @@ set(CMAKE_BUILD_TYPE Debug)
 
 include_directories(include)
 
-add_executable({game} main.cpp)
+add_executable({game} main.cpp src/{game}_game.cpp)
 '''
     main_template = '''#include <{game}/msg.h>
 #include <iostream>
@@ -173,6 +173,104 @@ int main(int argc, char** argv)
   }}
   std::cout << "Player " << winner << " has won!\\n";
 }}'''
+  
+    game_template = '''#include <{game}/{game}_game.h>
+
+namespace {game} {{
+
+{Game}Game::{Game}Game()
+{{
+  // can be commented if you run the python GUI on your own during testing
+  runGUI();
+
+  // prepare init message
+  initMsg init_msg;
+
+  init_msg.sendToGUI("player 1", "player 2");
+
+
+  // prepare first display message
+  // display.field = ...
+
+
+  display.sendToGUI();
+}}
+
+feedbackMsg {Game}Game::getFeedback()
+{{
+  // whatever data we need to communicate to the player
+  feedbackMsg msg;
+
+
+
+  return msg;
+}}
+
+void {Game}Game::play(inputMsg msg)
+{{
+  // update game state according to player input
+
+
+
+  // let the AI play
+  playAI();
+
+  // update display communicate to GUI
+
+  display.sendToGUI(winner_);
+}}
+
+void {Game}Game::playAI()
+{{
+
+
+
+}}
+}}
+'''
+
+    game_header_template = '''#ifndef {GAME}GAME_H
+#define {GAME}GAME_H
+
+#include <{game}/msg.h>
+
+namespace {game} {{
+
+class {Game}Game
+{{
+public:
+  // initialize the game and send to GUI
+  {Game}Game();
+
+  feedbackMsg getFeedback();
+
+  void play(inputMsg msg);
+
+  bool over() const
+  {{
+    return winner_ != 0;
+  }}
+
+  int winner() const
+  {{
+    return winner_;
+  }}
+
+private:
+
+  void playAI();
+
+
+  displayMsg display;
+  int winner_ = 0;
+
+
+
+
+
+}};
+}}
+#endif // {GAME}GAME_H'''
   
     gui_template = '''#!/usr/bin/python3
 import os
@@ -224,11 +322,18 @@ if __name__ == '__main__':
         winner = display_msg.winner
 
     print('(Python) Player {{}} has won!'.format(winner))'''
-
-    for name, cont in ((game + '_gui.py', gui_template), ('CMakeLists.txt', cmake_template), ('main.cpp', main_template)):
+    
+    created = []
+    created.append((game + '_gui.py', gui_template))
+    created.append(('CMakeLists.txt', cmake_template))
+    created.append(('main.cpp', main_template))
+    created.append(('src/{}_game.cpp'.format(game), game_template))
+    created.append(('include/{game}/{game}_game.h'.format(game=game), game_header_template))
+    
+    for name, cont in created:
         dest = game_path + '/' + name
         if os.path.exists(dest):
             print('File {} exists, skipping'.format(dest))
         #else:
         with open(dest, 'w') as f:
-            f.write(cont.format(game=game))
+            f.write(cont.format(game=game,Game=game.title(),GAME=game.upper()))

@@ -1,5 +1,10 @@
 refresh: 100 #ms
+# from C++ to Python / how to initialize display
 init: [int x1, int y1, int x2, int y2, int yb(640), int radius]
+
+# internal to C++: communication between game and player
 input: [double angle, double force]
 feedback: [int x, int y, int xo, int yo, int xb, int yb, int wind]
+
+# from C++ to Python / how to refresh display
 display: [double x, double y, bool hit]
