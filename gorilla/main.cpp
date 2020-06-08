@@ -7,16 +7,19 @@ using namespace std;
 
 int main(int argc, char** argv)
 {
-  runGUI();
-  initMsg init_msg;
-  feedbackMsg fb1_msg, fb2_msg;
-  inputMsg input;
-  displayMsg display;
 
-  GorillaGame();
-  bool newRound = true;
-  int winner(0);
-  while(winner == 0)
+     GorillaGame();
+
+//  runGUI();
+//  initMsg init_msg;
+//  feedbackMsg fb1_msg, fb2_msg;
+//  inputMsg input;
+//  displayMsg display;
+
+
+//  bool newRound = true;
+//  int winner(0);
+ /* while(winner == 0)
   {
     // update game state including winner variable if any
     int first_turn = rand()%2+1;
@@ -28,6 +31,7 @@ int main(int argc, char** argv)
     display.sendToGUI(winner);
     if(winner)
       break;
-  }
-  std::cout << "Player " << winner << " has won!\n";
+  }*/
+  //std::cout << "Player " << winner << " has won!\n";
+  return 0;
 }

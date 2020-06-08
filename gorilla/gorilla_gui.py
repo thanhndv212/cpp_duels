@@ -24,7 +24,8 @@ class Listener:
         with open(self.fifo) as fifo:
             data = yaml.load(fifo.read())
             if display:
-                print('(Python) Just read: {}'.format(data))
+                #print('(Python) Just read: {}'.format(data))
+                print('Display is running!');
             return dict_to_obj(data)
 
 
@@ -77,14 +78,13 @@ if __name__ == '__main__':
 
 
 
-    '''
-       winner = 0
-       while winner == 0:
-           # display_msg has the same structure as C++ displayMsg
-           display_msg = listener.read(True)
+    winner = 0
+    while winner == 0:
+       # display_msg has the same structure as C++ displayMsg
+       display_msg = listener.read(True)
 
-           # update display from display_msg
-           winner = display_msg.winner
+       # update display from display_msg
+       winner = display_msg.winner
 
-       print('(Python) Player {} has won!'.format(winner))
-       '''
+    print('(Python) Player {} has won!'.format(winner))
+

@@ -280,7 +280,6 @@ def drawGorilla(screenSurf, x, y):
     xAj = gorSurf.get_rect().width
     yAdj = gorSurf.get_rect().height
     x = (x//64)*64 + 32 - int(xAj/2)
-    print(x)
     y = y - yAdj - 1
     screenSurf.blit(gorSurf, (x, y))
 

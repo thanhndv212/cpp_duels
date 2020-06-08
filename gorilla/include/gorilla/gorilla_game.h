@@ -11,9 +11,13 @@ public:
   // initialize the game and send to GUI
   GorillaGame();
 
-  feedbackMsg getFeedback();
+  feedbackMsg getFeedback(initMsg initMsg, inputMsg input, int turn, double traveling_time);
+
   initMsg gameSet();
-  void play(inputMsg msg);
+
+  inputMsg getInput();
+
+  void play(initMsg initMsg, inputMsg msg, displayMsg display, int turn);
 
   bool over() const
   {
@@ -30,10 +34,6 @@ private:
   void playAI();
   displayMsg display;
   int winner_ = 0;
-
-
-
-
 
 
 };
