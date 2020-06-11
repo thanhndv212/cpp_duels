@@ -32,7 +32,7 @@ GorillaGame::GorillaGame()
   while(winner == 0)
   {
       input = getInput();
-      play(init_msg, input, display, turn);
+      //play(init_msg, input, display, turn);
       if(turn==1)
       {
           turn = 2;

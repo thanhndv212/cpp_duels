@@ -23,6 +23,11 @@ BLACK_COLOR = (0, 0, 0)
 WHITE_COLOR = (255, 255, 255)
 GRAY_COLOR = (173, 170, 173)
 
+RIGHT = 0
+UP = 1
+LEFT = 2
+DOWN = 3
+
 GOR_DOWN_ASCII = """
 
           XXXXXXXX
@@ -56,71 +61,6 @@ XXXXX   XXXXXXXXXXXX   XXXXX
      XXXXX       XXXXX
 """
 
-GOR_LEFT_ASCII = """
-   XXXXX
-  XXXXX   XXXXXXXX
- XXXXX    XXXXXXXX
- XXXXX   XX      XX
-XXXXX    XXXXXXXXXX
-XXXXX    XXX  X  XX
-XXXXX     XXXXXXXX
- XXXXX    XXXXXXXX
- XXXXX     XXXXXX
-  XXXXXXXXXXXXXXXXXXXX
-   XXXXXXXXXXXXXXXXXXXXXX
-      XXXXXXXX XXXXXXXXXXX
-      XXXXXXXX XXXXXXXXXXXX
-      XXXXXXX X XXXXXXXXXXX
-      XXXXXX XXX XXXXX XXXXX
-      XXX   XXXXX   XX XXXXX
-        XXXXXXXXXXXX   XXXXX
-        XXXXXXXXXXXX  XXXXX
-        XXXXXXXXXXXX  XXXXX
-        XXXXXXXXXXXX XXXXX
-       XXXXXXXXXXXXXXXXXX
-       XXXXXXXXXXXXX
-     XXXXXX     XXXXXX
-     XXXXX       XXXXX
-    XXXXX         XXXXX
-    XXXXX         XXXXX
-    XXXXX         XXXXX
-    XXXXX         XXXXX
-    XXXXX         XXXXX
-     XXXXX       XXXXX
-"""
-
-GOR_RIGHT_ASCII = """
-                    XXXXX
-          XXXXXXXX   XXXXX
-          XXXXXXXX    XXXXX
-         XX      XX   XXXXX
-         XXXXXXXXXX    XXXXX
-         XXX  X  XX    XXXXX
-          XXXXXXXX     XXXXX
-          XXXXXXXX    XXXXX
-           XXXXXX     XXXXX
-      XXXXXXXXXXXXXXXXXXXX
-   XXXXXXXXXXXXXXXXXXXXXX
-  XXXXXXXXXXXX XXXXXXX
- XXXXXXXXXXXXX XXXXXXX
- XXXXXXXXXXXX X XXXXXX
-XXXXX XXXXXX XXX XXXXX
-XXXXX XXX   XXXXX   XX
-XXXXX   XXXXXXXXXXXX
- XXXXX  XXXXXXXXXXXX
- XXXXX  XXXXXXXXXXXX
-  XXXXX XXXXXXXXXXXX
-   XXXXXXXXXXXXXXXXX
-       XXXXXXXXXXXXX
-     XXXXXX     XXXXXX
-     XXXXX       XXXXX
-    XXXXX         XXXXX
-    XXXXX         XXXXX
-    XXXXX         XXXXX
-    XXXXX         XXXXX
-    XXXXX         XXXXX
-     XXXXX       XXXXX
-"""
 
 BAN_RIGHT_ASCII = """
      XX
@@ -194,39 +134,6 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
                     X
 """
 
-SUN_SHOCKED_ASCII = """
-                    X
-                    X
-            X       X       X
-             X      X      X
-             X      X      X
-     X        X     X     X        X
-      X        X XXXXXXX X        X
-       XX      XXXXXXXXXXX      XX
-         X  XXXXXXXXXXXXXXXXX  X
-          XXXXXXXXXXXXXXXXXXXXX
-  X       XXXXXXXXXXXXXXXXXXXXX       X
-   XXXX  XXXXXXXXXXXXXXXXXXXXXXX  XXXX
-       XXXXXXXXXX XXXXX XXXXXXXXXX
-        XXXXXXXX   XXX   XXXXXXXX
-        XXXXXXXXX XXXXX XXXXXXXXX
-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-        XXXXXXXXXXXXXXXXXXXXXXXXX
-        XXXXXXXXXXXXXXXXXXXXXXXXX
-       XXXXXXXXXXXXXXXXXXXXXXXXXXX
-   XXXX  XXXXXXXXX     XXXXXXXXX  XXXX
-  X       XXXXXXX       XXXXXXX       X
-          XXXXXXX       XXXXXXX
-         X  XXXXXX     XXXXXX  X
-       XX      XXXXXXXXXXX      XX
-      X        X XXXXXXX X        X
-     X        X     X     X        X
-             X      X      X
-             X      X      X
-            X       X       X
-                    X
-                    X
-"""
 
 def makeSurfaceFromASCII(ascii, fgColor=(255,255,255), bgColor=(0,0,0)):
     """Returns a new pygame.Surface object that has the image drawn on it as specified by the ascii parameter.
@@ -250,16 +157,14 @@ def makeSurfaceFromASCII(ascii, fgColor=(255,255,255), bgColor=(0,0,0)):
     return surf
 
 GOR_DOWN_SURF    = makeSurfaceFromASCII(GOR_DOWN_ASCII,    GOR_COLOR,      SKY_COLOR)
-GOR_LEFT_SURF    = makeSurfaceFromASCII(GOR_LEFT_ASCII,    GOR_COLOR,      SKY_COLOR)
-GOR_RIGHT_SURF   = makeSurfaceFromASCII(GOR_RIGHT_ASCII,   GOR_COLOR,      SKY_COLOR)
 BAN_RIGHT_SURF   = makeSurfaceFromASCII(BAN_RIGHT_ASCII,   BAN_COLOR,      SKY_COLOR)
 BAN_LEFT_SURF    = makeSurfaceFromASCII(BAN_LEFT_ASCII,    BAN_COLOR,      SKY_COLOR)
 BAN_UP_SURF      = makeSurfaceFromASCII(BAN_UP_ASCII,      BAN_COLOR,      SKY_COLOR)
 BAN_DOWN_SURF    = makeSurfaceFromASCII(BAN_DOWN_ASCII,    BAN_COLOR,      SKY_COLOR)
 SUN_NORMAL_SURF  = makeSurfaceFromASCII(SUN_NORMAL_ASCII,  SUN_COLOR,      SKY_COLOR)
-SUN_SHOCKED_SURF = makeSurfaceFromASCII(SUN_SHOCKED_ASCII, SUN_COLOR,      SKY_COLOR)
 
-assert GOR_DOWN_SURF.get_size() == GOR_LEFT_SURF.get_size() == GOR_RIGHT_SURF.get_size()
+
+#assert GOR_DOWN_SURF.get_size() == GOR_LEFT_SURF.get_size() == GOR_RIGHT_SURF.get_size()
 """Create the pygame.Surface objects from the ASCII strings."""
 
 sunRect = pygame.Rect(SUN_X, SUN_Y, SUN_NORMAL_SURF.get_width(), SUN_NORMAL_SURF.get_height())
@@ -268,10 +173,7 @@ sunRect = pygame.Rect(SUN_X, SUN_Y, SUN_NORMAL_SURF.get_width(), SUN_NORMAL_SURF
 def drawSun(screenSurf, shocked=False):
     """Draws the sun sprite onto the screenSurf surface. If shocked is True, then use the shocked-looking face,
     otherwise use the normal smiley face. This function does not call python.display.update()"""
-    if shocked:
-        screenSurf.blit(SUN_SHOCKED_SURF, (SUN_X, SUN_Y))
-    else:
-        screenSurf.blit(SUN_NORMAL_SURF, (SUN_X, SUN_Y))
+    screenSurf.blit(SUN_NORMAL_SURF, (SUN_X, SUN_Y))
 
 def drawGorilla(screenSurf, x, y):
     """Draws the gorilla sprite onto the screenSurf surface at a specific x, y coordinate. The x,y coordinate
@@ -295,7 +197,11 @@ def drawWind(screenSurf, wind):
         pygame.draw.line(screenSurf, EXPLOSION_COLOR, (int(SCR_WIDTH / 2) + wind, SCR_HEIGHT - 5), (int(SCR_WIDTH / 2) + wind + arrowDir, SCR_HEIGHT - 5 - 2))
         pygame.draw.line(screenSurf, EXPLOSION_COLOR, (int(SCR_WIDTH / 2) + wind, SCR_HEIGHT - 5), (int(SCR_WIDTH / 2) + wind + arrowDir, SCR_HEIGHT - 5 + 2))
 
-def makeCityScape(screenSurf,buildingCoords):
+def makeCityScape(buildingCoords):
+
+    screenSurf = pygame.Surface((SCR_WIDTH, SCR_HEIGHT))  # first make the new surface the same size of the screen.
+    screenSurf.fill(SKY_COLOR)  # fill in the surface with the background sky color
+
     bottomLine = 335
     BuildWidth = int(SCR_WIDTH/10)
     windowWidth = 4  # the width of each window in pixels
@@ -322,3 +228,54 @@ def makeCityScape(screenSurf,buildingCoords):
                     winColor = LIGHT_WINDOW
                 pygame.draw.rect(screenSurf, winColor, (x + winx, (bottomLine - buildHeight) + 1 + winy, windowWidth, windowHeight))
         x += BuildWidth
+
+    return screenSurf
+
+def displayBanana(screenSurf, orient, x, y):
+    """Draws the banana shape to the screenSurf surface with its top left corner at the x y coordinate provided.
+    "orient" is one of the RIGHT, UP, LEFT, or DOWN values (which are the integers 0 to 3 respectively)"""
+    if orient == DOWN:
+        xAj = BAN_DOWN_SURF.get_rect().width
+        yAdj = BAN_DOWN_SURF.get_rect().height
+        x_ = x-xAj//2+1
+        y_ = y-yAdj//2+1
+        ban_down = BAN_DOWN_SURF.get_rect(topleft=(x_, y_))
+        screenSurf.blit(BAN_DOWN_SURF, (x_, y_))
+        pygame.display.update()
+        pygame.time.wait(100)
+        pygame.draw.rect(screenSurf, SKY_COLOR, ban_down)
+        pygame.display.update()
+    elif orient == UP:
+        xAj = BAN_UP_SURF.get_rect().width
+        yAdj = BAN_UP_SURF.get_rect().height
+        x_ = x - xAj // 2 + 1
+        y_ = y - yAdj // 2 + 1
+        ban_up = BAN_UP_SURF.get_rect(topleft=(x_, y_))
+        screenSurf.blit(BAN_UP_SURF, (x_, y_))
+        pygame.display.update()
+        pygame.time.wait(100)
+        pygame.draw.rect(screenSurf, SKY_COLOR, ban_up)
+        pygame.display.update()
+    elif orient == LEFT:
+        xAj = BAN_LEFT_SURF.get_rect().width
+        yAdj = BAN_LEFT_SURF.get_rect().height
+        x_ = x - xAj // 2 + 1
+        y_ = y - yAdj // 2 + 1
+        ban_left = BAN_LEFT_SURF.get_rect(topleft=(x_, y_))
+        screenSurf.blit(BAN_LEFT_SURF, (x_, y_))
+        pygame.display.update()
+        pygame.time.wait(100)
+        pygame.draw.rect(screenSurf, SKY_COLOR, ban_left)
+        pygame.display.update()
+    elif orient == RIGHT:
+        xAj = BAN_RIGHT_SURF.get_rect().width
+        yAdj = BAN_RIGHT_SURF.get_rect().height
+        x_ = x - xAj // 2 + 1
+        y_ = y - yAdj // 2 + 1
+        ban_right = BAN_RIGHT_SURF.get_rect(topleft=(x_, y_))
+        screenSurf.blit(BAN_RIGHT_SURF, (x_, y_))
+        pygame.display.update()
+        pygame.time.wait(100)
+        pygame.draw.rect(screenSurf, SKY_COLOR, ban_right)
+        pygame.display.update()
+
