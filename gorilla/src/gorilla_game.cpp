@@ -33,6 +33,7 @@ GorillaGame::GorillaGame()
   {
       input = getInput();
       play(init_msg, input, display, turn);
+      winner = winner_ ;
       if(turn==1)
       {
           turn = 2;
@@ -236,7 +237,6 @@ void GorillaGame::play(initMsg initMsg, inputMsg input, displayMsg display, int 
              display.sendToGUI(winner_);
              cout<<"Gorilla 1 was hit at ("<<banana_x<<","<<banana_y<<")\n";
              cout<<"Gorilla 2 won!!!!!!!!!!!\n";
-
              break;
          }
          if(hit_ == 2)

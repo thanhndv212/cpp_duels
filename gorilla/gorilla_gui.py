@@ -21,18 +21,12 @@ class Listener:
         os.mkfifo(self.fifo)
 
     def read(self, display=False):
-        #with open(self.fifo) as fifo:
-        try:
-            fifo = open(self.fifo)
+        with open(self.fifo) as fifo:
             data = yaml.load(fifo.read())
-        except :
-            pygame.quit()
-            os.exit()
 
         if display:
-            #print('(Python) Just read: {}'.format(data))
-            #print('Display is running!')
-            pass
+            print('(Python) Just read: {}'.format(data))
+            print('Display is running!')
         return dict_to_obj(data)
 
 class InitMsg:
@@ -41,7 +35,7 @@ class InitMsg:
         self.listen = listener
 
     def __enter__(self):
-        self.ob = self.listen.read(True)
+        self.ob = self.listen.read(False)
         self.data = self.ob.__dict__
         return self.ob
 
@@ -90,25 +84,23 @@ if __name__ == '__main__':
     pygame.display.update()
 
 
-    '''
-    running = True
-    while running:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-    '''
-
 
     winner = 0
-    i = 0
+    orient = 1
     while winner == 0:
         #setting up parameters
-        orient = random.randint(0, 4)
+
 
         # display_msg has the same structure as C++ displayMsg
 
-        display_msg = listener.read(True)
-
+        display_msg = listener.read()
+        # exit if received a exit msg
+        if 'close' in display_msg.__dict__:
+            while True:
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        pygame.quit()
+                        sys.exit()
 
         # update display from display_msg
         ban_x = display_msg.x
@@ -137,10 +129,6 @@ if __name__ == '__main__':
         pygame.display.update()
         # display_msg has the same structure as C++ displayMsg
         # update display from display_msg
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
     print('(Python) Player {} has won!'.format(winner))
     pygame.quit()
     sys.exit()

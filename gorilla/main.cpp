@@ -9,7 +9,8 @@ int main(int argc, char** argv)
 {
 
      GorillaGame();
-     shutGUI();
+     sendclose2GUI();                  // to send a exit message to GUI after running the whole program
+
 //  runGUI();
 //  initMsg init_msg;
 //  feedbackMsg fb1_msg, fb2_msg;

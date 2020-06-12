@@ -28,11 +28,12 @@ inline void runGUI()
     std::this_thread::sleep_for(std::chrono::milliseconds(10));
 }
 
-inline void shutGUI()
+inline void sendclose2GUI()
 {
-    remove(fifo_name);
+    std::ofstream fifo;
+    fifo.open(fifo_name, std::ios::out);
+    fifo << "close: " << " ";
 }
-
 struct initMsg
 {
   int x1; int y1; int x2; int y2; int yb[640]; int radius;//gorilla1+gorilla2 positions, building height, explosion radius
