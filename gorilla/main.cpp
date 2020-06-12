@@ -9,7 +9,7 @@ int main(int argc, char** argv)
 {
 
      GorillaGame();
-
+     shutGUI();
 //  runGUI();
 //  initMsg init_msg;
 //  feedbackMsg fb1_msg, fb2_msg;

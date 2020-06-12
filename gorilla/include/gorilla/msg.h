@@ -27,6 +27,12 @@ inline void runGUI()
   while(stat(fifo_name, &buffer))
     std::this_thread::sleep_for(std::chrono::milliseconds(10));
 }
+
+inline void shutGUI()
+{
+    remove(fifo_name);
+}
+
 struct initMsg
 {
   int x1; int y1; int x2; int y2; int yb[640]; int radius;//gorilla1+gorilla2 positions, building height, explosion radius
@@ -66,7 +72,7 @@ struct feedbackMsg
 
 struct displayMsg
 {
-  double x; double y; bool hit;
+  int x; int y; int hit;
   void sendToGUI(int winner = 0) const
   {
     std::ofstream fifo;

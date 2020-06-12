@@ -21,12 +21,19 @@ class Listener:
         os.mkfifo(self.fifo)
 
     def read(self, display=False):
-        with open(self.fifo) as fifo:
+        #with open(self.fifo) as fifo:
+        try:
+            fifo = open(self.fifo)
             data = yaml.load(fifo.read())
-            if display:
-                #print('(Python) Just read: {}'.format(data))
-                print('Display is running!');
-            return dict_to_obj(data)
+        except :
+            pygame.quit()
+            os.exit()
+
+        if display:
+            #print('(Python) Just read: {}'.format(data))
+            #print('Display is running!')
+            pass
+        return dict_to_obj(data)
 
 class InitMsg:
 
@@ -76,29 +83,32 @@ if __name__ == '__main__':
     pygame.display.set_caption('Gorillas.py')
     winSurface.fill(bgd.SKY_COLOR)
     skylineSurf = bgd.makeCityScape(buildHeight)
+    bgd.drawSun(skylineSurf)
+    bgd.drawGorilla(skylineSurf, gorPos[0], gorPos[1])
+    bgd.drawGorilla(skylineSurf, gorPos[2], gorPos[3])
     winSurface.blit(skylineSurf, (0, 0))
-    bgd.drawSun(winSurface)
-    bgd.drawGorilla(winSurface, gorPos[0], gorPos[1])
-    bgd.drawGorilla(winSurface, gorPos[2], gorPos[3])
     pygame.display.update()
 
+
+    '''
     running = True
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-    pygame.quit()
-    sys.exit()
-
+    '''
 
 
     winner = 0
+    i = 0
     while winner == 0:
         #setting up parameters
         orient = random.randint(0, 4)
 
         # display_msg has the same structure as C++ displayMsg
+
         display_msg = listener.read(True)
+
 
         # update display from display_msg
         ban_x = display_msg.x
@@ -110,15 +120,27 @@ if __name__ == '__main__':
             continue
         else:
             if hit == 0:
-                bgd.displayBanana(winSurfaces, orient, ban_x, ban_y)
+                bgd.displayBanana(winSurface, orient, ban_x, ban_y)
                 if orient == 3:
                     orient = 0
                 else:
                     orient += 1
-            if hit == 1:
-                """ Do explosion"""
-                pass
-            #if hit == 2:
-        pygame.display.update()
-    print('(Python) Player {} has won!'.format(winner))
+            if hit == 3:
+                '''Do explosion'''
+                pygame.draw.circle(skylineSurf, bgd.SKY_COLOR, (ban_x, ban_y), radius)
 
+            if hit == 1:
+                '''Do explosion and game over'''
+                pygame.draw.circle(skylineSurf, bgd.SKY_COLOR, (ban_x, ban_y), radius+10)
+                pygame.time.delay(50)
+        winSurface.blit(skylineSurf, (0, 0))
+        pygame.display.update()
+        # display_msg has the same structure as C++ displayMsg
+        # update display from display_msg
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+    print('(Python) Player {} has won!'.format(winner))
+    pygame.quit()
+    sys.exit()

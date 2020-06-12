@@ -170,7 +170,7 @@ SUN_NORMAL_SURF  = makeSurfaceFromASCII(SUN_NORMAL_ASCII,  SUN_COLOR,      SKY_C
 sunRect = pygame.Rect(SUN_X, SUN_Y, SUN_NORMAL_SURF.get_width(), SUN_NORMAL_SURF.get_height())
 """sunRect will be a global value so we'll always know where the sun is."""
 
-def drawSun(screenSurf, shocked=False):
+def drawSun(screenSurf):
     """Draws the sun sprite onto the screenSurf surface. If shocked is True, then use the shocked-looking face,
     otherwise use the normal smiley face. This function does not call python.display.update()"""
     screenSurf.blit(SUN_NORMAL_SURF, (SUN_X, SUN_Y))
@@ -183,6 +183,7 @@ def drawGorilla(screenSurf, x, y):
     yAdj = gorSurf.get_rect().height
     x = (x//64)*64 + 32 - int(xAj/2)
     y = y - yAdj - 1
+
     screenSurf.blit(gorSurf, (x, y))
 
 def drawWind(screenSurf, wind):
@@ -234,6 +235,7 @@ def makeCityScape(buildingCoords):
 def displayBanana(screenSurf, orient, x, y):
     """Draws the banana shape to the screenSurf surface with its top left corner at the x y coordinate provided.
     "orient" is one of the RIGHT, UP, LEFT, or DOWN values (which are the integers 0 to 3 respectively)"""
+    WaitTime = 100
     if orient == DOWN:
         xAj = BAN_DOWN_SURF.get_rect().width
         yAdj = BAN_DOWN_SURF.get_rect().height
@@ -242,7 +244,7 @@ def displayBanana(screenSurf, orient, x, y):
         ban_down = BAN_DOWN_SURF.get_rect(topleft=(x_, y_))
         screenSurf.blit(BAN_DOWN_SURF, (x_, y_))
         pygame.display.update()
-        pygame.time.wait(100)
+        pygame.time.wait(WaitTime)
         pygame.draw.rect(screenSurf, SKY_COLOR, ban_down)
         pygame.display.update()
     elif orient == UP:
@@ -253,7 +255,7 @@ def displayBanana(screenSurf, orient, x, y):
         ban_up = BAN_UP_SURF.get_rect(topleft=(x_, y_))
         screenSurf.blit(BAN_UP_SURF, (x_, y_))
         pygame.display.update()
-        pygame.time.wait(100)
+        pygame.time.wait(WaitTime)
         pygame.draw.rect(screenSurf, SKY_COLOR, ban_up)
         pygame.display.update()
     elif orient == LEFT:
@@ -264,7 +266,7 @@ def displayBanana(screenSurf, orient, x, y):
         ban_left = BAN_LEFT_SURF.get_rect(topleft=(x_, y_))
         screenSurf.blit(BAN_LEFT_SURF, (x_, y_))
         pygame.display.update()
-        pygame.time.wait(100)
+        pygame.time.wait(WaitTime)
         pygame.draw.rect(screenSurf, SKY_COLOR, ban_left)
         pygame.display.update()
     elif orient == RIGHT:
@@ -275,7 +277,8 @@ def displayBanana(screenSurf, orient, x, y):
         ban_right = BAN_RIGHT_SURF.get_rect(topleft=(x_, y_))
         screenSurf.blit(BAN_RIGHT_SURF, (x_, y_))
         pygame.display.update()
-        pygame.time.wait(100)
+        pygame.time.wait(WaitTime)
         pygame.draw.rect(screenSurf, SKY_COLOR, ban_right)
         pygame.display.update()
 
+#def disp(orient, x, y) :
