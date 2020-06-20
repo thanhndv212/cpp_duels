@@ -1,7 +1,5 @@
-import pygame, sys, time, random, math
+import pygame, random
 from pygame.font import FontType
-from pygame.ftfont import Font
-from pygame.locals import *
 
 
 SCR_WIDTH = 640
@@ -27,6 +25,8 @@ RIGHT = 0
 UP = 1
 LEFT = 2
 DOWN = 3
+
+
 
 GOR_DOWN_ASCII = """
 
@@ -281,4 +281,22 @@ def displayBanana(screenSurf, orient, x, y):
         pygame.draw.rect(screenSurf, SKY_COLOR, ban_right)
         pygame.display.update()
 
-#def disp(orient, x, y) :
+def drawText(text, surfObj, x, y , fgcol, bgcol,fontSize=20, pos='left'):
+    """A generic function to draw a string to a pygame.Surface object at a certain x,y location. This returns
+    a pygame.Rect object which describes the area the string was drawn on.
+
+    If the pos parameter is "left", then the x,y parameter specifies the top left corner of the text rectangle.
+    If the pos parameter is "center", then the x,y parameter specifies the middle top point of the text rectangle."""
+    GAME_FONT = pygame.font.SysFont(None, fontSize)
+
+    textobj = GAME_FONT.render(text, 1, fgcol, bgcol) # creates the text in memory (it's not on a surface yet).
+    textrect = textobj.get_rect()
+
+    if pos == 'left':
+        textrect.topleft = (x, y)
+    elif pos == 'center':
+        textrect.midtop = (x, y)
+    surfObj.blit(textobj, textrect) # draws the text onto the surface
+    """Remember that the text will only appear on the screen if you pass the pygame.Surface object that was
+    returned from the call to pygame.display.set_mode(), and only after pygame.display.update() is called."""
+    return textrect

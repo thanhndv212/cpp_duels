@@ -2,7 +2,7 @@
 import os
 import sys
 import yaml
-import pygame, random
+import pygame
 import BackGround as bgd
 
 
@@ -21,8 +21,8 @@ class Listener:
         os.mkfifo(self.fifo)
 
     def read(self, display=False):
-        with open(self.fifo) as fifo:
-            data = yaml.load(fifo.read())
+        with open(self.fifo, 'r') as fifo :
+            data = yaml.load(fifo.read()) or {}
 
         if display:
             print('(Python) Just read: {}'.format(data))
@@ -52,7 +52,6 @@ if __name__ == '__main__':
     listener.__init__()
     refresh = 100
     # init_msg has the same structure as C++ initMsg
-
     #init_msg = listener.read(True)
 
     # init display / structure from init_msg
@@ -72,14 +71,20 @@ if __name__ == '__main__':
     gorPos.append(goPosy1)
     gorPos.append(goPosx2)
     gorPos.append(goPosy2)
+    p1 = "player1"
+    p2 = "player2"
+
+    #initialise pygame
+    pygame.init()
 
     winSurface = pygame.display.set_mode((bgd.SCR_WIDTH, bgd.SCR_HEIGHT), 0, 32)
     pygame.display.set_caption('Gorillas.py')
-    winSurface.fill(bgd.SKY_COLOR)
     skylineSurf = bgd.makeCityScape(buildHeight)
     bgd.drawSun(skylineSurf)
     bgd.drawGorilla(skylineSurf, gorPos[0], gorPos[1])
     bgd.drawGorilla(skylineSurf, gorPos[2], gorPos[3])
+    bgd.drawText(p1, skylineSurf, 2, 2, bgd.WHITE_COLOR, bgd.SKY_COLOR)
+    bgd.drawText(p2, skylineSurf, 538, 2, bgd.WHITE_COLOR, bgd.SKY_COLOR)
     winSurface.blit(skylineSurf, (0, 0))
     pygame.display.update()
 
@@ -88,47 +93,57 @@ if __name__ == '__main__':
     winner = 0
     orient = 1
     while winner == 0:
-        #setting up parameters
-
-
         # display_msg has the same structure as C++ displayMsg
-
         display_msg = listener.read()
         # exit if received a exit msg
         if 'close' in display_msg.__dict__:
-            while True:
-                for event in pygame.event.get():
-                    if event.type == pygame.QUIT:
-                        pygame.quit()
-                        sys.exit()
-
+            break
         # update display from display_msg
-        ban_x = display_msg.x
-        ban_y = display_msg.y
-        hit = display_msg.hit
-        winner = display_msg.winner
+        else:
+            ban_x = display_msg.x
+            ban_y = display_msg.y
+            hit = display_msg.hit
+            winner = display_msg.winner
+            print(winner)
 
         if ban_x < 0 or ban_x > bgd.SCR_WIDTH:
             continue
         else:
             if hit == 0:
                 bgd.displayBanana(winSurface, orient, ban_x, ban_y)
-                if orient == 3:
+                if orient >= 3:
                     orient = 0
                 else:
                     orient += 1
-            if hit == 3:
-                '''Do explosion'''
-                pygame.draw.circle(skylineSurf, bgd.SKY_COLOR, (ban_x, ban_y), radius)
+            else:
+                if winner == 1 or winner == 2:
+                    '''Do explosion and game over'''
+                    pygame.draw.circle(skylineSurf, bgd.SKY_COLOR, (ban_x, ban_y), radius+10)
+                    winSurface.blit(skylineSurf, (0, 0))
+                    endword = "Player{} won the game".format(winner)
+                    print('(Python) Player {} has won!'.format(winner))
+                else:
+                    '''Do explosion'''
+                    pygame.draw.circle(skylineSurf, bgd.SKY_COLOR, (ban_x, ban_y), radius)
+                    endword = "it is a draw"
 
-            if hit == 1:
-                '''Do explosion and game over'''
-                pygame.draw.circle(skylineSurf, bgd.SKY_COLOR, (ban_x, ban_y), radius+10)
-                pygame.time.delay(50)
         winSurface.blit(skylineSurf, (0, 0))
         pygame.display.update()
-        # display_msg has the same structure as C++ displayMsg
-        # update display from display_msg
-    print('(Python) Player {} has won!'.format(winner))
-    pygame.quit()
-    sys.exit()
+
+        # assure can exit the game at anytime
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+    # show the gameover screen
+    pygame.time.wait(500)
+    winSurface.fill(bgd.BLACK_COLOR)
+    bgd.drawText('G A M E   O V E R', winSurface, bgd.SCR_WIDTH / 2, 15, bgd.WHITE_COLOR, bgd.BLACK_COLOR, fontSize=40, pos='center')
+    bgd.drawText(endword, winSurface, bgd.SCR_WIDTH / 2, 110, bgd.WHITE_COLOR, bgd.BLACK_COLOR, pos='center')
+    pygame.display.update()
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
