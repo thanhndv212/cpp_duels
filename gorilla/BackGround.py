@@ -245,8 +245,7 @@ def displayBanana(screenSurf, orient, x, y):
         screenSurf.blit(BAN_DOWN_SURF, (x_, y_))
         pygame.display.update()
         pygame.time.wait(WaitTime)
-        pygame.draw.rect(screenSurf, SKY_COLOR, ban_down)
-        pygame.display.update()
+        
     elif orient == UP:
         xAj = BAN_UP_SURF.get_rect().width
         yAdj = BAN_UP_SURF.get_rect().height
@@ -256,8 +255,7 @@ def displayBanana(screenSurf, orient, x, y):
         screenSurf.blit(BAN_UP_SURF, (x_, y_))
         pygame.display.update()
         pygame.time.wait(WaitTime)
-        pygame.draw.rect(screenSurf, SKY_COLOR, ban_up)
-        pygame.display.update()
+       
     elif orient == LEFT:
         xAj = BAN_LEFT_SURF.get_rect().width
         yAdj = BAN_LEFT_SURF.get_rect().height
@@ -267,8 +265,7 @@ def displayBanana(screenSurf, orient, x, y):
         screenSurf.blit(BAN_LEFT_SURF, (x_, y_))
         pygame.display.update()
         pygame.time.wait(WaitTime)
-        pygame.draw.rect(screenSurf, SKY_COLOR, ban_left)
-        pygame.display.update()
+        
     elif orient == RIGHT:
         xAj = BAN_RIGHT_SURF.get_rect().width
         yAdj = BAN_RIGHT_SURF.get_rect().height
@@ -278,7 +275,6 @@ def displayBanana(screenSurf, orient, x, y):
         screenSurf.blit(BAN_RIGHT_SURF, (x_, y_))
         pygame.display.update()
         pygame.time.wait(WaitTime)
-        pygame.draw.rect(screenSurf, SKY_COLOR, ban_right)
-        pygame.display.update()
+      
 
 #def disp(orient, x, y) :

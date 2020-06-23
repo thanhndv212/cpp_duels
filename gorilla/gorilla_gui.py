@@ -129,6 +129,10 @@ if __name__ == '__main__':
         pygame.display.update()
         # display_msg has the same structure as C++ displayMsg
         # update display from display_msg
-    print('(Python) Player {} has won!'.format(winner))
+    if winner == 3:
+        print('No one has won!')
+        
+    else:
+        print('(Python) Player {} has won!'.format(winner))
     pygame.quit()
     sys.exit()

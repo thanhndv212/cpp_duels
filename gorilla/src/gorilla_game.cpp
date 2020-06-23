@@ -1,6 +1,9 @@
 #include <gorilla/gorilla_game.h>
 #include <gorilla/msg.h>
 #include <iostream>
+#include <cstdlib>
+#include <ctime>
+#include <limits>
 #include <math.h>
 
 #define PI 3.14159265
@@ -41,12 +44,14 @@ GorillaGame::GorillaGame()
       else
           turn = 1;
       i++;
-      if(i== 3)
+      if(i == 3) //maximum of turns to be played by 2 players before draw
       {
          cout<<"no one has won!!\n";
+         winner = 3;
+         display.sendToGUI(winner);
          break;
        }
-      if(winner)
+      if(winner != 0)
       {
           cout<<"player "<<winner<<" has won!\n";
           break;
@@ -58,7 +63,6 @@ bool inplay_check(int x)
 {
     if (x <0 || x > 639)
         return false;
-        cout<<"xPos of banana "<<x<<'\n';
     return true;
 
 }
@@ -66,42 +70,50 @@ bool inplay_check(int x)
 int hit_check(initMsg initMsg, int x, int y)
 {
     int bottomLine = 335;
-    int Gor1_xPos = floor(initMsg.x1/64)*64 +32;
+    int Gor1_xPos = int(initMsg.x1/64)*64 +32;
     int Gor1_yPos = initMsg.y1 -15 ;
-    int Gor2_xPos = floor(initMsg.x2/64)*64 +32;
+    int Gor2_xPos = int(initMsg.x2/64)*64 +32;
     int Gor2_yPos = initMsg.y2 -15;
     int epl_rad = initMsg.radius ;
+
+    //cout<<x<<" ; "<<Gor1_xPos<<" ; "<<y<<" ; "<<Gor1_yPos<<"\n";
+    //cout<<x<<" ; "<<Gor2_xPos<<" ; "<<y<<" ; "<<Gor2_yPos<<"\n";
+
     double Gor1_check = (sqrt((x-Gor1_xPos)*(x-Gor1_xPos)+(y-Gor1_yPos)*(y-Gor1_yPos)));
-    cout<<x<<" ; "<<Gor1_xPos<<" ; "<<y<<" ; "<<Gor1_yPos<<"\n";
-    cout<<x<<" ; "<<Gor2_xPos<<" ; "<<y<<" ; "<<Gor2_yPos<<"\n";
     cout<<"distance from banana to gor1: "<<Gor1_check<<"\n";
+
     double Gor2_check = (sqrt((x-Gor2_xPos)*(x-Gor2_xPos)+(y-Gor2_yPos)*(y-Gor2_yPos)));
     cout<<"distance from banana to gor2: "<<Gor2_check<<"\n";
-    //int Bd_check = int(sqrt((x-0)*(x-0)+(y-initMsg.yb[0])*(y-initMsg.yb[0])));
 
-
-    /*for (int i = 0; i < 640; ++i) {
-       int new_Bd_check = int(sqrt((x-i)*(x-i)+(y-initMsg.yb[i])*(y-initMsg.yb[i])));
-       //if (Bd_check > new_Bd_check)
-           //Bd_check = new_Bd_check;
+    double Bd_check = (sqrt((x-0)*(x-0)+(y-initMsg.yb[0])*(y-initMsg.yb[0])));
+    for (int i = 0; i < 640; ++i)
+    {
+       double new_Bd_check = (sqrt((x-i)*(x-i)+(y-initMsg.yb[i])*(y-initMsg.yb[i])));
+       if (Bd_check > new_Bd_check)
+           Bd_check = new_Bd_check;
     }
-    */
+    cout<<"Bd_check is: "<<Bd_check<<'\n';
     if(Gor1_check<=epl_rad)
         return 1;//banana hit gorilla 1
     if(Gor2_check<=epl_rad)
         return 2;//banana hit gorilla 2
-    if(y >= bottomLine - initMsg.yb[x]- 6)
-        return 3;
-    //if(new_Bd_check<=epl_rad)
-        //return 3;//banana hit buildings
+    //if(Bd_check <= epl_rad)
+    //    return 3;
+    if(y>=bottomLine-initMsg.yb[x]-epl_rad)
+    {
+        cout<<"distance to building: "<<(-y+bottomLine-initMsg.yb[x])<<'\n';
+        return 3;//banana hit buildings
+    }
+    cout<<"distance to building: "<<(-y+bottomLine-initMsg.yb[x])<<'\n';
     return 0;
 }
 
 initMsg GorillaGame::gameSet(){
     initMsg init_msg;
     int bottomLine = 335;
-    init_msg.x1 = rand()%100 + 100;
-    init_msg.x2 = rand()%300 + 220;
+    srand((unsigned) time(0));
+    init_msg.x1 = (rand()%319)  ;
+    init_msg.x2 = (rand()%319) + 320;
     init_msg.radius = 10;
     for ( int i=0; i<10;i++)
     {
@@ -120,31 +132,45 @@ inputMsg GorillaGame::getInput()
 {
     //get input from player
     inputMsg input;
-    cout<<"Enter a velocity : ";
-    cin>>input.force;
-    cout<<"You have entered "<<input.force<<'\n';
     cout<<"Enter a angle: ";
-    cin>>input.angle;
+    while(!(cin>>input.angle))
+    {
+          cin.clear();
+          cin.ignore(numeric_limits<streamsize>::max(),'\n');
+          cout<<"Invalid value. Try numeric value only!\n";\
+          cout<<"Enter a angle: ";
+    }
     cout<<"You have entered: "<<input.angle<<'\n';
+    cout<<"Enter a velocity: ";
+    while(!(cin>>input.force))
+    {
+          cin.clear();
+          cin.ignore(numeric_limits<streamsize>::max(),'\n');
+          cout<<"Invalid value. Try numeric value only!\n";\
+          cout<<"Enter a velocity: ";
+    }
+    cout<<"You have entered: "<<input.force<<'\n';
+
     return input;
 }
 
 feedbackMsg GorillaGame::getFeedback(initMsg initMsg, inputMsg input, int turn, double traveling_time)
 {
   // whatever data we need to communicate to the player
-  const double gravity = 12;
+  feedbackMsg msg;
+  const double gravity = 10;
   //velocity and angle
   double angle = input.angle;
   double vel = input.force;
   double cosine = 0;
   double sine = 0;
-  feedbackMsg msg;
+
   if(turn ==1 ){
       msg.x = initMsg.x1;
       msg.y = initMsg.y1;
       msg.xo = initMsg.x2;
       msg.yo = initMsg.y2;
-      msg.wind = rand()%2 - 2;
+      msg.wind = rand()%4 - 2;
       cosine = cos(angle*PI/180);
       sine = sin(angle*PI/180);
   }
@@ -154,12 +180,10 @@ feedbackMsg GorillaGame::getFeedback(initMsg initMsg, inputMsg input, int turn, 
       msg.y = initMsg.y2;
       msg.xo = initMsg.x1;
       msg.yo = initMsg.y1;
-      msg.wind = rand()%2 - 2;
+      msg.wind = rand()%4 - 2;
       angle = 180 - angle;
       cosine = cos(angle*PI/180);
       sine = sin(angle*PI/180);
-      //cosine = -cos(angle*PI/180);
-      //sine = sin(angle*PI/180);
   }
   //starting position of banana
   int start_x = msg.x;
@@ -171,16 +195,23 @@ feedbackMsg GorillaGame::getFeedback(initMsg initMsg, inputMsg input, int turn, 
   int banana_x;
   int banana_y;
   //handling time
+
   double t = traveling_time;
   //update banana's position
-  banana_x = int(start_x + vel*cosine*t + (1/2)*wind*t*t);
-  banana_y = int(start_y - vel*sine*t + gravity*t*t);
-  //banana_x = int(start_x + vel*cosine*t + (1/2)*wind*t*t);
-  //banana_y = int(start_y + vel*sine*t - (1/2)*gravity*t*t);
+  if(int(vel-0) == 0)
+  {
+     cout<<"velocity is zero!!!\n";
+     banana_x = int(start_x/64)*64 + 32;
+     banana_y = start_y - 15;
+  }
+  else
+  {
+     banana_x = int(start_x + vel*cosine*t + 0.01*wind*t*t);
+     banana_y = int(start_y - vel*sine*t + 0.5*gravity*t*t);
+  }
 
   msg.xb = banana_x;
   msg.yb = banana_y;
-  //cout<<"pass this first!\n";
   return msg;
 }
 
@@ -191,23 +222,21 @@ void GorillaGame::play(initMsg initMsg, inputMsg input, displayMsg display, int 
 
   cout<<"Player has shoot a banana with a velocity of "<<input.force<<" at a angle of "<<input.angle<<'\n';
 
-  //How to handle timer to calculate trajectory of banana and update display to GUI???
-
   double t = 1;
-  //main play
-   feedbackMsg fb_msg;
+  feedbackMsg fb_msg;
 
-   int banana_x;
-   int banana_y;
-   bool HIT = 0;
-   bool inplay = 1;
-   int hit_;
+  int banana_x;
+  int banana_y;
+  bool HIT = 0;//whether hit gor
+  bool inplay = 1;
+  int hit_;//hit what
 
    while (not HIT && inplay)
      {
          fb_msg = getFeedback(initMsg, input, turn, t);
          banana_x = fb_msg.xb;
          banana_y = fb_msg.yb;
+
          inplay = inplay_check(banana_x);
          if(!inplay)
          {
@@ -217,9 +246,9 @@ void GorillaGame::play(initMsg initMsg, inputMsg input, displayMsg display, int 
 
          display.x = banana_x;
          display.y = banana_y;
+
          hit_ = hit_check(initMsg,banana_x,banana_y);
-         //check if hit targeted gorilla --> HIT = 1; winner = turn;
-         //if(HIT){over();winner()}
+
          if(hit_ == 0)
          {
              HIT = 0;
@@ -227,8 +256,6 @@ void GorillaGame::play(initMsg initMsg, inputMsg input, displayMsg display, int 
              display.sendToGUI();
              t+= 0.15;
          }
-
-
          if(hit_ == 1)
          {
              HIT = 1;
@@ -255,18 +282,11 @@ void GorillaGame::play(initMsg initMsg, inputMsg input, displayMsg display, int 
              display.hit = hit_;
              display.sendToGUI();
              cout<<"BUILDINGS was hit at ("<<banana_x<<","<<banana_y<<")\n";
-             //build hit signal need to be sent////////////////////////////////////
              break;
          }
-         //display.sendToGUI();
-         //t+= 0.2;
-
 
      }
-   //display.hit = HIT;
-
-
-
+   cout<<"------------------------------------\n";
 
 
   // let the AI play
