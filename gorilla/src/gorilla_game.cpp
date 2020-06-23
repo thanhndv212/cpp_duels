@@ -136,7 +136,7 @@ inputMsg GorillaGame::getInput()
     while(!(cin>>input.angle))
     {
           cin.clear();
-          cin.ignore(numeric_limits<streamsize>::max(),'\n');
+          cin.ignore(1000,'\n');
           cout<<"Invalid value. Try numeric value only!\n";\
           cout<<"Enter a angle: ";
     }
@@ -145,7 +145,7 @@ inputMsg GorillaGame::getInput()
     while(!(cin>>input.force))
     {
           cin.clear();
-          cin.ignore(numeric_limits<streamsize>::max(),'\n');
+          cin.ignore(1000,'\n');
           cout<<"Invalid value. Try numeric value only!\n";\
           cout<<"Enter a velocity: ";
     }

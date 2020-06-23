@@ -129,23 +129,14 @@ if __name__ == '__main__':
 
         winSurface.blit(skylineSurf, (0, 0))
         pygame.display.update()
-<<<<<<< HEAD
-        # display_msg has the same structure as C++ displayMsg
-        # update display from display_msg
-    if winner == 3:
-        print('No one has won!')
-        
-    else:
-        print('(Python) Player {} has won!'.format(winner))
-    pygame.quit()
-    sys.exit()
-=======
-
         # assure can exit the game at anytime
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+
+        # display_msg has the same structure as C++ displayMsg
+        # update display from display_msg
 
     # show the gameover screen
     pygame.time.wait(500)
@@ -158,4 +149,3 @@ if __name__ == '__main__':
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
->>>>>>> bfa76980cfdd72126de9e252254d0d56d1f02166
