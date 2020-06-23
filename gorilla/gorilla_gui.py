@@ -104,7 +104,6 @@ if __name__ == '__main__':
             ban_y = display_msg.y
             hit = display_msg.hit
             winner = display_msg.winner
-            print(winner)
 
         if ban_x < 0 or ban_x > bgd.SCR_WIDTH:
             continue
@@ -120,7 +119,7 @@ if __name__ == '__main__':
                     '''Do explosion and game over'''
                     pygame.draw.circle(skylineSurf, bgd.SKY_COLOR, (ban_x, ban_y), radius+10)
                     winSurface.blit(skylineSurf, (0, 0))
-                    endword = "Player{} won the game".format(winner)
+                    endword = "Playerv {} won the game".format(winner)
                     print('(Python) Player {} has won!'.format(winner))
                 else:
                     '''Do explosion'''

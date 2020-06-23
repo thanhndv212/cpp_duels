@@ -16,6 +16,7 @@ public:
   initMsg gameSet();
 
   inputMsg getInput();
+  inputMsg getInput_AI(initMsg initMsg, int pre_xb, int pre_yb, double pre_vel, double pre_angle, int iter);
 
   void play(initMsg initMsg, inputMsg msg, displayMsg display, int turn);
 
@@ -28,8 +29,13 @@ public:
   {
     return winner_;
   }
-
-
+  int pre_xb = 0;
+  int pre_yb = 0;
+  int tar_x;
+  int tar_y;
+  double pre_vel = 40;
+  double pre_angle = 45;
+  const double k = 0.2;
 private:
 
   void playAI();
