@@ -73,7 +73,7 @@ struct feedbackMsg
 
 struct displayMsg
 {
-  int x; int y; int hit;
+  int x; int y; int hit; int wind;
   void sendToGUI(int winner = 0) const
   {
     std::ofstream fifo;
@@ -82,6 +82,7 @@ struct displayMsg
     fifo << "\nx: " << x;
     fifo << "\ny: " << y;
     fifo << "\nhit: " << hit;
+    fifo << "\nwind: " << wind;
     fifo << std::endl;
     fifo.close();
     timer.sleep();

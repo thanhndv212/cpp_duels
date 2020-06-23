@@ -96,16 +96,16 @@ if __name__ == '__main__':
         # display_msg has the same structure as C++ displayMsg
         display_msg = listener.read()
         # exit if received a exit msg
-        if 'close' in display_msg.__dict__:
-            break
         # update display from display_msg
-        else:
-            ban_x = display_msg.x
-            ban_y = display_msg.y
-            hit = display_msg.hit
-            winner = display_msg.winner
-            print(winner)
+        ban_x = display_msg.x
+        ban_y = display_msg.y
+        hit = display_msg.hit
+        winner = display_msg.winner
+        wind = display_msg.wind
 
+        bgd.drawText(str(wind), winSurface, bgd.SCR_WIDTH / 2, 335, bgd.WHITE_COLOR, bgd.SKY_COLOR,
+                     fontSize=15, pos='center')
+        pygame.display.update()
         if ban_x < 0 or ban_x > bgd.SCR_WIDTH:
             continue
         else:
@@ -120,7 +120,7 @@ if __name__ == '__main__':
                     '''Do explosion and game over'''
                     pygame.draw.circle(skylineSurf, bgd.SKY_COLOR, (ban_x, ban_y), radius+10)
                     winSurface.blit(skylineSurf, (0, 0))
-                    endword = "Player{} won the game".format(winner)
+                    endword = "Playerv {} won the game".format(winner)
                     print('(Python) Player {} has won!'.format(winner))
                 else:
                     '''Do explosion'''
@@ -138,7 +138,7 @@ if __name__ == '__main__':
         # display_msg has the same structure as C++ displayMsg
         # update display from display_msg
 
-    # show the gameover screen
+    """show the gameover screen"""
     pygame.time.wait(500)
     winSurface.fill(bgd.BLACK_COLOR)
     bgd.drawText('G A M E   O V E R', winSurface, bgd.SCR_WIDTH / 2, 15, bgd.WHITE_COLOR, bgd.BLACK_COLOR, fontSize=40, pos='center')

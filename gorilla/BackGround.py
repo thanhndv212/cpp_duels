@@ -241,7 +241,6 @@ def displayBanana(screenSurf, orient, x, y):
         yAdj = BAN_DOWN_SURF.get_rect().height
         x_ = x-xAj//2+1
         y_ = y-yAdj//2+1
-        ban_down = BAN_DOWN_SURF.get_rect(topleft=(x_, y_))
         screenSurf.blit(BAN_DOWN_SURF, (x_, y_))
         pygame.display.update()
         pygame.time.wait(WaitTime)
@@ -251,7 +250,6 @@ def displayBanana(screenSurf, orient, x, y):
         yAdj = BAN_UP_SURF.get_rect().height
         x_ = x - xAj // 2 + 1
         y_ = y - yAdj // 2 + 1
-        ban_up = BAN_UP_SURF.get_rect(topleft=(x_, y_))
         screenSurf.blit(BAN_UP_SURF, (x_, y_))
         pygame.display.update()
         pygame.time.wait(WaitTime)
@@ -261,7 +259,6 @@ def displayBanana(screenSurf, orient, x, y):
         yAdj = BAN_LEFT_SURF.get_rect().height
         x_ = x - xAj // 2 + 1
         y_ = y - yAdj // 2 + 1
-        ban_left = BAN_LEFT_SURF.get_rect(topleft=(x_, y_))
         screenSurf.blit(BAN_LEFT_SURF, (x_, y_))
         pygame.display.update()
         pygame.time.wait(WaitTime)
@@ -271,7 +268,6 @@ def displayBanana(screenSurf, orient, x, y):
         yAdj = BAN_RIGHT_SURF.get_rect().height
         x_ = x - xAj // 2 + 1
         y_ = y - yAdj // 2 + 1
-        ban_right = BAN_RIGHT_SURF.get_rect(topleft=(x_, y_))
         screenSurf.blit(BAN_RIGHT_SURF, (x_, y_))
         pygame.display.update()
         pygame.time.wait(WaitTime)
