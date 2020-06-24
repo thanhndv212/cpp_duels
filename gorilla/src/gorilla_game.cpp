@@ -36,6 +36,7 @@ GorillaGame::GorillaGame()
   {
       if(turn==1)
       {
+          //input = getInput();
           input = getInput_AI(init_msg, pre_xb, pre_yb, pre_vel, pre_angle, i);
           play(init_msg, input, display, turn);
           winner = winner_;
