@@ -50,7 +50,7 @@ GorillaGame::GorillaGame()
           turn = 1;
       }
       i++;
-      if(i == 7) //maximum of turns to be played by 2 players before draw
+      if(i ==  100) //maximum of turns to be played by 2 players before draw
       {
          cout<<"In C++: no one has won!!\n";
          winner = 3;
@@ -155,8 +155,9 @@ inputMsg GorillaGame::getInput()
 
     return input;
 }
-inputMsg GorillaGame::getInput_AI(initMsg initMsg, int pre_xb, int pre_yb, double pre_vel, double pre_angle,int iter)
+inputMsg GorillaGame::getInput_AI(initMsg initMsg, int pre_xb_, int pre_yb_, double pre_vel_, double pre_angle_,int iter)
 {
+    cout<<pre_vel_<<"  "<<pre_xb_<<'\n';
     inputMsg input_AI;
 
     if(iter == 1)
@@ -167,21 +168,52 @@ inputMsg GorillaGame::getInput_AI(initMsg initMsg, int pre_xb, int pre_yb, doubl
     }
     else
     {
-        int delta =  pre_xb - initMsg.x2 ;
-        if(delta<0)
+        if (pre_xb_<0)
         {
-            input_AI.force = pre_vel + k*abs(delta);
+            input_AI.force = pre_vel;
+            input_AI.angle = pre_angle;
+        }
+        else if (pre_xb_>639)
+        {
+            input_AI.force = pre_vel_/2;
             input_AI.angle = pre_angle;
         }
         else
         {
-            input_AI.force = pre_vel - k*abs(delta);
-            input_AI.angle = pre_angle;
+            int delta =  pre_xb_ - initMsg.x2 ;
+            cout<<"delta = "<<delta<<'\n';
+            if(delta<0)
+            {
+                if (abs(delta)<32)
+                {
+                    input_AI.force = pre_vel_ + 5;
+                    input_AI.angle = pre_angle_;
+                }
+                else
+                {
+                    input_AI.force = pre_vel_ + k*abs(delta);
+                    input_AI.angle = pre_angle_;
+                }
+            }
+            else
+            {
+                if (abs(delta)<32)
+                {
+                    input_AI.force = pre_vel_ - 5;
+                    input_AI.angle = pre_angle_;
+                }
+                else
+                {
+                    input_AI.force = pre_vel_ - k*abs(delta);
+                    input_AI.angle = pre_angle_;
+                }
+            }
         }
-    }
-    pre_vel = input_AI.force;
-    pre_angle = input_AI.angle;
-    return input_AI;
+        pre_vel = input_AI.force;
+        pre_angle = input_AI.angle;
+      }
+
+     return input_AI;
 }
 
 feedbackMsg GorillaGame::getFeedback(initMsg initMsg, inputMsg input, int turn, double traveling_time)
@@ -318,10 +350,10 @@ void GorillaGame::play(initMsg initMsg, inputMsg input, displayMsg display, int 
          int xtoBuildEdge, ytoBuildEdge;
          if(hit_ == 3)
          {
-             HIT = 3;
              ytoBuildEdge = banana_y - (bottomline - initMsg.yb[banana_x]) ;
              if (turn == 1)
              {
+                 HIT = 1;
                  xtoBuildEdge = (banana_x + 1) % 64 - 1;
                  if (xtoBuildEdge < ytoBuildEdge)
                  {
@@ -350,12 +382,6 @@ void GorillaGame::play(initMsg initMsg, inputMsg input, displayMsg display, int 
              display.sendToGUI();
              cout<<"BUILDINGS was hit at ("<<display.x<<","<<display.y<<")\n";
              break;
-             HIT = 1;
-             display.hit = hit_;
-             display.sendToGUI();
-             cout<<"BUILDINGS was hit at ("<<banana_x<<","<<banana_y<<")\n";
-             //break;
-
          }
 
      }
