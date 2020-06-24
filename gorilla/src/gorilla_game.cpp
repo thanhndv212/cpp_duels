@@ -101,8 +101,6 @@ int hit_check(initMsg initMsg, int x, int y)
     //if(Bd_check <= epl_rad)
     //    return 3;
     if(y>=bottomLine-initMsg.yb[x]-6)
-
-    if(y>=bottomLine-initMsg.yb[x]-epl_rad)
     {
         return 3;//banana hit buildings
     }
@@ -113,7 +111,7 @@ int hit_check(initMsg initMsg, int x, int y)
 initMsg GorillaGame::gameSet(){
     initMsg init_msg;
     int bottomLine = 335;
-    srand((unsigned) time(0));
+    //srand((unsigned) time(0));
     init_msg.x1 = (rand()%319)  ;
     init_msg.x2 = (rand()%319) + 320;
     init_msg.radius = 12;
@@ -319,41 +317,64 @@ void GorillaGame::play(initMsg initMsg, inputMsg input, displayMsg display, int 
          if(hit_ == 3)
          {
              HIT = 3;
+             winner_ = 0;
              ytoBuildEdge = banana_y - (bottomline - initMsg.yb[banana_x]) ;
-             if (turn == 1)
+             if (ytoBuildEdge >0)
              {
-                 xtoBuildEdge = (banana_x + 1) % 64 - 1;
-                 if (xtoBuildEdge < ytoBuildEdge)
+                 if (turn == 1)
                  {
-                     display.x = banana_x - 0.8*xtoBuildEdge;
-                     display.y = banana_y - 0.8*xtoBuildEdge;
+                     xtoBuildEdge = (banana_x + 1) % 64 - 1;
+                     if (xtoBuildEdge < ytoBuildEdge)
+                     {
+                         display.x = banana_x - xtoBuildEdge;
+                         display.y = banana_y - xtoBuildEdge;
+                     }
+                     else {
+                         display.x = banana_x - ytoBuildEdge;
+                         display.y = banana_y - ytoBuildEdge;
+                     }
                  }
-                 else {
-                     display.x = banana_x - 0.8*ytoBuildEdge;
-                     display.y = banana_y - 0.8*ytoBuildEdge;
+                 if (turn == 2)
+                 {
+                     xtoBuildEdge = 63 - ((banana_x + 1) % 64 - 1 );
+                     if (xtoBuildEdge < ytoBuildEdge)
+                     {
+                         display.x = banana_x + xtoBuildEdge;
+                         display.y = banana_y - xtoBuildEdge;
+                     }
+                     else {
+                         display.x = banana_x + ytoBuildEdge;
+                         display.y = banana_y - ytoBuildEdge;
+                     }
                  }
              }
-             if (turn == 2)
+             int x_d_gorilla, rPlusg;
+             x_d_gorilla = int(labs(display.x - fb_msg.xo));
+             cout<< x_d_gorilla << endl;
+             rPlusg = initMsg.radius + 15 ;
+             cout << rPlusg << endl ;
+             if (rPlusg > x_d_gorilla)
              {
-                 xtoBuildEdge = 63 - ((banana_x + 1) % 64 - 1 );
-                 if (xtoBuildEdge < ytoBuildEdge)
-                 {
-                     display.x = banana_x + 0.8*xtoBuildEdge;
-                     display.y = banana_y - 0.8*xtoBuildEdge;
-                 }
-                 else {
-                     display.x = banana_x + 0.8*ytoBuildEdge;
-                     display.y = banana_y - 0.8*ytoBuildEdge;
-                 }
+                 if(turn==1)
+                    {
+                        HIT = 1;
+                        winner_ = 1;
+                    }
+                 else
+                    {
+                        HIT = 2;
+                        winner_ = 2;
+                    }
              }
-             display.hit = hit_;
-             display.sendToGUI();
+             cout<< HIT << endl;
+             display.hit = HIT;
+             display.sendToGUI(winner_);
              cout<<"BUILDINGS was hit at ("<<display.x<<","<<display.y<<")\n";
-             break;
-             HIT = 1;
-             display.hit = hit_;
-             display.sendToGUI();
-             cout<<"BUILDINGS was hit at ("<<banana_x<<","<<banana_y<<")\n";
+             //break;
+             //HIT = 1;
+             //display.hit = hit_;
+             //display.sendToGUI();
+             //cout<<"BUILDINGS was hit at ("<<banana_x<<","<<banana_y<<")\n";
              //break;
 
          }
