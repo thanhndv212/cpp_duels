@@ -316,7 +316,7 @@ void GorillaGame::play(initMsg initMsg, inputMsg input, displayMsg display, int 
          int xtoBuildEdge, ytoBuildEdge;
          if(hit_ == 3)
          {
-             HIT = 3;
+             HIT = 1;
              winner_ = 0;
              ytoBuildEdge = banana_y - (bottomline - initMsg.yb[banana_x]) ;
              if (ytoBuildEdge >0)
@@ -357,17 +357,16 @@ void GorillaGame::play(initMsg initMsg, inputMsg input, displayMsg display, int 
              {
                  if(turn==1)
                     {
-                        HIT = 1;
+                        hit_ = 1;
                         winner_ = 1;
                     }
                  else
                     {
-                        HIT = 2;
+                        hit_ = 2;
                         winner_ = 2;
                     }
              }
-             cout<< HIT << endl;
-             display.hit = HIT;
+             display.hit = hit_;
              display.sendToGUI(winner_);
              cout<<"BUILDINGS was hit at ("<<display.x<<","<<display.y<<")\n";
              //break;
