@@ -250,7 +250,7 @@ void GorillaGame::play(initMsg initMsg, inputMsg input, displayMsg display, int 
 
   cout<<"Player has shoot a banana with a velocity of "<<input.force<<" at a angle of "<<input.angle<<'\n';
 
-  double t = 0.1;
+  double t = 0.0;
   feedbackMsg fb_msg;
 
   int banana_x;
