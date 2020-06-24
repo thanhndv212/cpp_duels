@@ -50,7 +50,7 @@ GorillaGame::GorillaGame()
           turn = 1;
       }
       i++;
-      if(i ==  100) //maximum of turns to be played by 2 players before draw
+      if(i ==  10) //maximum of turns to be played by 2 players before draw
       {
          cout<<"In C++: no one has won!!\n";
          winner = 3;
@@ -111,7 +111,7 @@ int hit_check(initMsg initMsg, int x, int y)
 initMsg GorillaGame::gameSet(){
     initMsg init_msg;
     int bottomLine = 335;
-    //srand((unsigned) time(0));
+    srand((unsigned) time(0));
     init_msg.x1 = (rand()%319)  ;
     init_msg.x2 = (rand()%319) + 320;
     init_msg.radius = 12;
@@ -160,7 +160,7 @@ inputMsg GorillaGame::getInput_AI(initMsg initMsg, int pre_xb_, int pre_yb_, dou
 
     if(iter == 1)
     {
-        cout<<"iteration"<<iter<<'\n';
+        //cout<<"iteration"<<iter<<'\n';
         input_AI.force = pre_vel;
         input_AI.angle = pre_angle;
     }
@@ -179,7 +179,7 @@ inputMsg GorillaGame::getInput_AI(initMsg initMsg, int pre_xb_, int pre_yb_, dou
         else
         {
             int delta =  pre_xb_ - initMsg.x2 ;
-            cout<<"delta = "<<delta<<'\n';
+            //cout<<"delta = "<<delta<<'\n';
             if(delta<0)
             {
                 if (abs(delta)<32)
@@ -322,7 +322,7 @@ void GorillaGame::play(initMsg initMsg, inputMsg input, displayMsg display, int 
              HIT = 0;
              display.hit = hit_;
              display.sendToGUI();
-             cout<<"banana is flying...\n";
+             cout<<"banana is flying...be patient\n";
              t+= 0.15;
          }
          if(hit_ == 1)
@@ -348,21 +348,12 @@ void GorillaGame::play(initMsg initMsg, inputMsg input, displayMsg display, int 
          int xtoBuildEdge, ytoBuildEdge;
          if(hit_ == 3)
          {
-<<<<<<< HEAD
-=======
              HIT = 1;
              winner_ = 0;
->>>>>>> 020c1e23b7de6ce935ef8acc44b1049b2525e678
              ytoBuildEdge = banana_y - (bottomline - initMsg.yb[banana_x]) ;
              if (ytoBuildEdge >0)
              {
-<<<<<<< HEAD
-                 HIT = 1;
-                 xtoBuildEdge = (banana_x + 1) % 64 - 1;
-                 if (xtoBuildEdge < ytoBuildEdge)
-=======
                  if (turn == 1)
->>>>>>> 020c1e23b7de6ce935ef8acc44b1049b2525e678
                  {
                      xtoBuildEdge = (banana_x + 1) % 64 - 1;
                      if (xtoBuildEdge < ytoBuildEdge)
@@ -391,9 +382,9 @@ void GorillaGame::play(initMsg initMsg, inputMsg input, displayMsg display, int 
              }
              int x_d_gorilla, rPlusg;
              x_d_gorilla = int(labs(display.x - fb_msg.xo));
-             cout<< x_d_gorilla << endl;
+             //cout<< x_d_gorilla << endl;
              rPlusg = initMsg.radius + 15 ;
-             cout << rPlusg << endl ;
+             //cout << rPlusg << endl ;
              if (rPlusg > x_d_gorilla)
              {
                  if(turn==1)
@@ -410,17 +401,12 @@ void GorillaGame::play(initMsg initMsg, inputMsg input, displayMsg display, int 
              display.hit = hit_;
              display.sendToGUI(winner_);
              cout<<"BUILDINGS was hit at ("<<display.x<<","<<display.y<<")\n";
-<<<<<<< HEAD
-             break;
-=======
              //break;
              //HIT = 1;
              //display.hit = hit_;
              //display.sendToGUI();
              //cout<<"BUILDINGS was hit at ("<<banana_x<<","<<banana_y<<")\n";
              //break;
-
->>>>>>> 020c1e23b7de6ce935ef8acc44b1049b2525e678
          }
 
      }
@@ -430,7 +416,7 @@ void GorillaGame::play(initMsg initMsg, inputMsg input, displayMsg display, int 
 
 }
 
-void GorillaGame::playAI()
-{}
+//void GorillaGame::playAI()
+//{}
 
 }

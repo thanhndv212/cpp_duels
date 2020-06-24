@@ -31,8 +31,6 @@ public:
   }
   int pre_xb = 0;
   int pre_yb = 0;
-  int tar_x;
-  int tar_y;
   double pre_vel = 50;
   double pre_angle = 85;
   const double k = 0.2;
