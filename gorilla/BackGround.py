@@ -186,18 +186,6 @@ def drawGorilla(screenSurf, x, y):
 
     screenSurf.blit(gorSurf, (x, y))
 
-def drawWind(screenSurf, wind):
-    """Draws the wind arrow on the screenSurf object at the bottom of the screen. The "wind" parameter comes from
-    a call to getWind()."""
-    if wind != 0:
-        wind *= 3
-        pygame.draw.line(screenSurf, EXPLOSION_COLOR, (int(SCR_WIDTH / 2), SCR_HEIGHT - 5), (int(SCR_WIDTH / 2) + wind, SCR_HEIGHT - 5))
-        # draw the arrow end
-        if wind > 0: arrowDir = -2
-        else:        arrowDir = 2
-        pygame.draw.line(screenSurf, EXPLOSION_COLOR, (int(SCR_WIDTH / 2) + wind, SCR_HEIGHT - 5), (int(SCR_WIDTH / 2) + wind + arrowDir, SCR_HEIGHT - 5 - 2))
-        pygame.draw.line(screenSurf, EXPLOSION_COLOR, (int(SCR_WIDTH / 2) + wind, SCR_HEIGHT - 5), (int(SCR_WIDTH / 2) + wind + arrowDir, SCR_HEIGHT - 5 + 2))
-
 def makeCityScape(buildingCoords):
 
     screenSurf = pygame.Surface((SCR_WIDTH, SCR_HEIGHT))  # first make the new surface the same size of the screen.
