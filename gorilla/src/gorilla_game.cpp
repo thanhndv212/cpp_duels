@@ -37,7 +37,7 @@ GorillaGame::GorillaGame()
       if(turn==1)
       {
           //input = getInput();
-          input = getInput_AI(init_msg, pre_xb, pre_yb, pre_vel, pre_angle, i);
+          input = getInput_AI(init_msg, pre_xb2, pre_yb2, pre_xb, pre_yb, pre_vel2, pre_angle2, pre_vel, pre_angle, i, turn);
           play(init_msg, input, display, turn);
           winner = winner_;
           turn = 2;
@@ -45,7 +45,8 @@ GorillaGame::GorillaGame()
       }
       else
       {
-          input = getInput();
+          //input = getInput();
+          input = getInput_AI(init_msg, pre_xb2, pre_yb2, pre_xb, pre_yb, pre_vel2, pre_angle2, pre_vel, pre_angle, i, turn);
           play(init_msg, input, display, turn);
           winner = winner_;
           turn = 1;
@@ -154,63 +155,121 @@ inputMsg GorillaGame::getInput()
 
     return input;
 }
-inputMsg GorillaGame::getInput_AI(initMsg initMsg, int pre_xb_, int pre_yb_, double pre_vel_, double pre_angle_,int iter)
+inputMsg GorillaGame::getInput_AI(initMsg initMsg_, int pre_xb2_, int pre_yb2_, int pre_xb_, int pre_yb_, double pre_vel2_, double pre_angle2_, double pre_vel_, double pre_angle_,int iter, int turn_)
 {
     cout<<pre_vel_<<"  "<<pre_xb_<<'\n';
     inputMsg input_AI;
-
-    if(iter == 1)
+    if(turn_ == 1)
     {
-        //cout<<"iteration"<<iter<<'\n';
-        input_AI.force = pre_vel;
-        input_AI.angle = pre_angle;
-    }
-    else
-    {
-        if (pre_xb_<0)
+        if(iter == 1)
         {
+            //cout<<"iteration"<<iter<<'\n';
             input_AI.force = pre_vel;
-            input_AI.angle = pre_angle;
-        }
-        else if (pre_xb_>639)
-        {
-            input_AI.force = pre_vel_/2;
             input_AI.angle = pre_angle;
         }
         else
         {
-            int delta =  pre_xb_ - initMsg.x2 ;
-            //cout<<"delta = "<<delta<<'\n';
-            if(delta<0)
+            if (pre_xb_<0)
             {
-                if (abs(delta)<32)
-                {
-                    input_AI.force = pre_vel_ + 5;
-                    input_AI.angle = pre_angle_;
-                }
-                else
-                {
-                    input_AI.force = pre_vel_ + k*abs(delta);
-                    input_AI.angle = pre_angle_;
-                }
+                input_AI.force = pre_vel;
+                input_AI.angle = pre_angle;
+            }
+            else if (pre_xb_>639)
+            {
+                input_AI.force = pre_vel_/2;
+                input_AI.angle = pre_angle;
             }
             else
             {
-                if (abs(delta)<32)
+                int delta =  pre_xb_ - initMsg_.x2 ;
+                //cout<<"delta = "<<delta<<'\n';
+                if(delta<0)
                 {
-                    input_AI.force = pre_vel_ - 5;
-                    input_AI.angle = pre_angle_;
+                    if (abs(delta)<32)
+                    {
+                        input_AI.force = pre_vel_ + 5;
+                        input_AI.angle = pre_angle;
+                    }
+                    else
+                    {
+                        input_AI.force = pre_vel_ + k*abs(delta);
+                        input_AI.angle = pre_angle;
+                    }
                 }
                 else
                 {
-                    input_AI.force = pre_vel_ - k*abs(delta);
-                    input_AI.angle = pre_angle_;
+                    if (abs(delta)<32)
+                    {
+                        input_AI.force = pre_vel_ - 5;
+                        input_AI.angle = pre_angle;
+                    }
+                    else
+                    {
+                        input_AI.force = pre_vel_ - k*abs(delta);
+                        input_AI.angle = pre_angle;
+                    }
                 }
             }
+            pre_vel = input_AI.force;
+            pre_angle = input_AI.angle;
+          }
+    }
+    else
+    {
+        if(iter == 0)
+        {
+            //cout<<"iteration"<<iter<<'\n';
+            input_AI.force = pre_vel2;
+            input_AI.angle = pre_angle2;
         }
-        pre_vel = input_AI.force;
-        pre_angle = input_AI.angle;
-      }
+        else
+        {
+            if (pre_xb2_>639)
+            {
+                input_AI.force = pre_vel2;
+                input_AI.angle = pre_angle2;
+            }
+            else if (pre_xb2_<0)
+            {
+                input_AI.force = pre_vel2_/2;
+                input_AI.angle = pre_angle2;
+            }
+            else
+            {
+                int delta =  pre_xb2_ - initMsg_.x1 ;
+                //cout<<"delta = "<<delta<<'\n';
+                if(delta<0)
+                {
+                    if (abs(delta)<32)
+                    {
+                        input_AI.force = pre_vel2_ - 5;
+                        input_AI.angle = pre_angle2;
+                    }
+                    else
+                    {
+                        input_AI.force = pre_vel2_ - k*abs(delta);
+                        input_AI.angle = pre_angle2;
+                    }
+                }
+                else
+                {
+                    if (abs(delta)<32)
+                    {
+                        input_AI.force = pre_vel_ + 5;
+                        input_AI.angle = pre_angle_;
+                    }
+                    else
+                    {
+                        input_AI.force = pre_vel_ + k*abs(delta);
+                        input_AI.angle = pre_angle_;
+                    }
+                }
+            }
+            pre_vel = input_AI.force;
+            pre_angle = input_AI.angle;
+          }
+    }
+
 
      return input_AI;
 }
@@ -304,7 +363,11 @@ void GorillaGame::play(initMsg initMsg, inputMsg input, displayMsg display, int 
              pre_yb = fb_msg.xb;
 
          }
-
+         else
+         {
+             pre_xb2 = fb_msg.xb;
+             pre_yb2 = fb_msg.yb;
+         }
          inplay = inplay_check(banana_x);
          if(!inplay)
          {
